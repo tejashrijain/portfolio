@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riddhi Jain | AI Explorer Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #7c3aed;
+    --violet: #a855f7;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --gold: #f59e0b;
+    --lime: #84cc16;
+    --navy: #0f0c29;
+    --dark: #1a0533;
+    --card: rgba(255,255,255,0.07);
+    --glass: rgba(255,255,255,0.12);
+    --border: rgba(255,255,255,0.15);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--navy);
+    color: #fff;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--pink);
+    position: fixed; top:0; left:0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform .1s, width .2s, height .2s, background .2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--violet);
+    position: fixed; top:0; left:0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform .15s ease, width .3s, height .3s;
+  }
+
+  /* ── STARS CANVAS ── */
+  #starsCanvas {
+    position: fixed; top:0; left:0;
+    width:100%; height:100%;
+    z-index: 0; pointer-events: none;
+  }
+
+  /* ── FLOATING PARTICLES ── */
+  .particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity:0; }
+    10% { opacity:.6; }
+    90% { opacity:.3; }
+    100% { transform: translateY(-10vh) scale(1.5); opacity:0; }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; width:100%;
+    padding: 16px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 100;
+    background: rgba(15,12,41,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem; color: var(--cyan);
+    letter-spacing: 2px;
+  }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-weight: 700; font-size: .9rem;
+    transition: color .3s;
+    letter-spacing: 1px;
+  }
+  .nav-links a:hover { color: var(--pink); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 40px 60px;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset:0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(124,58,237,.4) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(6,182,212,.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(236,72,153,.25) 0%, transparent 50%);
+  }
+  .hero-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; align-items: center;
+    max-width: 1200px; width:100%;
+    position: relative; z-index:2;
+  }
+
+  /* Photo Card */
+  .photo-wrapper {
+    display: flex; justify-content: center; align-items: center;
+    position: relative;
+  }
+  .photo-3d-scene {
+    position: relative;
+    width: 340px; height: 400px;
+    transform-style: preserve-3d;
+    animation: heroFloat 4s ease-in-out infinite;
+  }
+  @keyframes heroFloat {
+    0%,100% { transform: translateY(0) rotateY(-5deg) rotateX(3deg); }
+    50% { transform: translateY(-18px) rotateY(5deg) rotateX(-3deg); }
+  }
+  .photo-card {
+    width: 100%; height: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 3px solid transparent;
+    background: linear-gradient(var(--dark), var(--dark)) padding-box,
+                linear-gradient(135deg, var(--purple), var(--pink), var(--cyan)) border-box;
+    box-shadow: 0 30px 80px rgba(124,58,237,.5), 0 0 60px rgba(236,72,153,.2);
+    position: relative;
+  }
+  .photo-card img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top center;
+    filter: brightness(1.05) saturate(1.1);
+  }
+  .photo-card::after {
+    content:'';
+    position: absolute; inset:0;
+    background: linear-gradient(to top, rgba(124,58,237,.6) 0%, transparent 60%);
+  }
+  .photo-badge {
+    position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--gold), var(--pink));
+    padding: 10px 28px;
+    border-radius: 50px;
+    font-family: 'Orbitron', monospace;
+    font-size: .75rem; font-weight: 700;
+    letter-spacing: 2px; color:#fff;
+    white-space: nowrap;
+    box-shadow: 0 8px 30px rgba(236,72,153,.5);
+    z-index: 5;
+  }
+  .orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px dashed;
+    animation: spin linear infinite;
+    pointer-events: none;
+  }
+  .orbit-ring:nth-child(1) {
+    width: 420px; height: 420px;
+    border-color: rgba(124,58,237,.35);
+    top: -40px; left: -40px;
+    animation-duration: 20s;
+  }
+  .orbit-ring:nth-child(2) {
+    width: 500px; height: 500px;
+    border-color: rgba(6,182,212,.2);
+    top: -80px; left: -80px;
+    animation-duration: 30s; animation-direction: reverse;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Orbiting icons */
+  .orbit-icon {
+    position: absolute;
+    width: 46px; height: 46px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0,0,0,.3);
+    animation: orbitIcon 8s ease-in-out infinite;
+  }
+  .orbit-icon:nth-child(1) { top:-30px; right:-10px; animation-delay:0s; }
+  .orbit-icon:nth-child(2) { top:40%; right:-50px; animation-delay:1.5s; }
+  .orbit-icon:nth-child(3) { bottom:-20px; right:20px; animation-delay:3s; }
+  .orbit-icon:nth-child(4) { top:20%; left:-50px; animation-delay:4.5s; }
+  @keyframes orbitIcon {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-12px) scale(1.1); }
+  }
+
+  /* Hero text */
+  .hero-text { position: relative; z-index:2; }
+  .hero-greeting {
+    font-size: .95rem; font-weight: 700;
+    color: var(--cyan); letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hello-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--lime);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(132,204,22,.7); }
+    50% { box-shadow: 0 0 0 10px rgba(132,204,22,0); }
+  }
+  .hero-name {
+    font-family: 'Baloo 2', cursive;
+    font-size: 4rem; font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--violet) 50%, var(--pink) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .hero-info {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 28px;
+  }
+  .hero-info-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: .95rem; color: rgba(255,255,255,.8);
+    font-weight: 600;
+  }
+  .hero-info-item span:first-child { font-size: 1.2rem; }
+  .hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,.75);
+    margin-bottom: 32px;
+    max-width: 460px;
+  }
+  .hero-desc strong { color: var(--cyan); }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    border-radius: 50px;
+    font-weight: 800; font-size: 1rem;
+    text-decoration: none; color: #fff;
+    border: none; cursor: none;
+    box-shadow: 0 8px 30px rgba(124,58,237,.5);
+    transition: transform .2s, box-shadow .2s;
+    display: inline-block;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px rgba(124,58,237,.7);
+  }
+  .btn-secondary {
+    padding: 14px 32px;
+    background: transparent;
+    border-radius: 50px;
+    border: 2px solid var(--cyan);
+    font-weight: 800; font-size: 1rem;
+    color: var(--cyan);
+    text-decoration: none; cursor: none;
+    transition: all .2s;
+    display: inline-block;
+  }
+  .btn-secondary:hover {
+    background: var(--cyan);
+    color: var(--navy);
+    transform: translateY(-3px);
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: absolute; bottom: 30px; left:50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-size: .75rem; color: rgba(255,255,255,.4); letter-spacing:2px;
+    z-index:2;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+  }
+  .scroll-arrow { font-size: 1.2rem; }
+
+  /* ── SECTION BASE ── */
+  section { position: relative; z-index:1; padding: 100px 40px; }
+  .section-label {
+    font-family: 'Orbitron', monospace;
+    font-size: .7rem; letter-spacing: 4px;
+    color: var(--cyan); text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before, .section-label::after {
+    content:''; flex:1; height:1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    max-width: 80px;
+  }
+  .section-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2.8rem; font-weight: 800;
+    text-align: center;
+    background: linear-gradient(135deg, #fff, var(--violet));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 14px;
+  }
+  .section-sub {
+    text-align: center; font-size: 1rem;
+    color: rgba(255,255,255,.6); margin-bottom: 60px;
+    max-width: 600px; margin-inline: auto;
+    line-height: 1.7;
+  }
+  .section-header { text-align: center; }
+
+  /* ── ABOUT ── */
+  .about-section {
+    background: linear-gradient(180deg, var(--navy) 0%, #1a0a2e 100%);
+  }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; align-items: center;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .about-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 40px;
+    backdrop-filter: blur(20px);
+    position: relative; overflow: hidden;
+  }
+  .about-card::before {
+    content:'';
+    position: absolute; top:-50%; left:-50%;
+    width:200%; height:200%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(124,58,237,.08) 60deg, transparent 120deg);
+    animation: rotateBg 10s linear infinite;
+  }
+  @keyframes rotateBg { to { transform: rotate(360deg); } }
+  .about-card > * { position: relative; z-index:1; }
+  .about-label {
+    font-family: 'Orbitron', monospace;
+    font-size: .7rem; color: var(--gold);
+    letter-spacing: 3px; margin-bottom: 16px;
+  }
+  .about-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.8rem; font-weight: 800;
+    color: #fff; margin-bottom: 16px;
+  }
+  .about-text {
+    font-size: .95rem; line-height: 1.8;
+    color: rgba(255,255,255,.75);
+  }
+  .about-text strong { color: var(--violet); }
+
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .stat-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px;
+    text-align: center;
+    transition: transform .3s, box-shadow .3s;
+    cursor: default;
+  }
+  .stat-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 20px 50px rgba(124,58,237,.3);
+  }
+  .stat-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem; font-weight: 900;
+    color: var(--gold);
+  }
+  .stat-label {
+    font-size: .8rem; color: rgba(255,255,255,.6);
+    font-weight: 700; letter-spacing: 1px;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-section {
+    background: linear-gradient(180deg, #1a0a2e 0%, #0f0c29 100%);
+  }
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 28px; max-width: 1100px; margin: 0 auto;
+  }
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px 28px;
+    position: relative; overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
+    cursor: default;
+    group: true;
+  }
+  .project-card::before {
+    content:'';
+    position: absolute; inset:0;
+    background: linear-gradient(135deg, var(--glow-a), var(--glow-b));
+    opacity: 0;
+    transition: opacity .3s;
+    z-index:0;
+  }
+  .project-card:hover { transform: translateY(-10px) scale(1.02); }
+  .project-card:hover::before { opacity:.08; }
+  .project-card:hover { box-shadow: 0 30px 70px var(--glow-shadow); }
+  .project-card > * { position: relative; z-index:1; }
+
+  .project-card:nth-child(1) { --glow-a:#7c3aed; --glow-b:#ec4899; --glow-shadow:rgba(124,58,237,.4); }
+  .project-card:nth-child(2) { --glow-a:#06b6d4; --glow-b:#7c3aed; --glow-shadow:rgba(6,182,212,.3); }
+  .project-card:nth-child(3) { --glow-a:#f59e0b; --glow-b:#ec4899; --glow-shadow:rgba(245,158,11,.3); }
+  .project-card:nth-child(4) { --glow-a:#84cc16; --glow-b:#06b6d4; --glow-shadow:rgba(132,204,22,.3); }
+  .project-card:nth-child(5) { --glow-a:#ec4899; --glow-b:#a855f7; --glow-shadow:rgba(236,72,153,.4); }
+  .project-card:nth-child(6) { --glow-a:#a855f7; --glow-b:#f59e0b; --glow-shadow:rgba(168,85,247,.3); }
+
+  .project-emoji {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .project-tag {
+    font-size: .7rem; font-weight: 800;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block; margin-bottom: 14px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: var(--cyan);
+  }
+  .project-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.3rem; font-weight: 800;
+    color: #fff; margin-bottom: 10px;
+  }
+  .project-desc {
+    font-size: .9rem; line-height: 1.7;
+    color: rgba(255,255,255,.65);
+  }
+  .project-tool {
+    margin-top: 18px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .tool-chip {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: .75rem; font-weight: 700;
+    background: rgba(124,58,237,.2);
+    border: 1px solid rgba(124,58,237,.4);
+    color: var(--violet);
+  }
+  .tool-chip.cyan { background: rgba(6,182,212,.15); border-color: rgba(6,182,212,.4); color: var(--cyan); }
+  .tool-chip.gold { background: rgba(245,158,11,.15); border-color: rgba(245,158,11,.4); color: var(--gold); }
+  .tool-chip.green { background: rgba(132,204,22,.15); border-color: rgba(132,204,22,.4); color: var(--lime); }
+  .tool-chip.pink { background: rgba(236,72,153,.15); border-color: rgba(236,72,153,.4); color: var(--pink); }
+
+  /* ── SKILLS ── */
+  .skills-section {
+    background: linear-gradient(180deg, #0f0c29 0%, #1a0533 100%);
+  }
+  .skills-inner { max-width: 1000px; margin: 0 auto; }
+  .skills-group { margin-bottom: 50px; }
+  .skills-group-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.3rem; font-weight: 800;
+    color: var(--gold); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .skill-row { display: flex; flex-direction: column; gap: 16px; }
+  .skill-item { display: flex; align-items: center; gap: 16px; }
+  .skill-icon { font-size: 1.4rem; width: 36px; text-align: center; }
+  .skill-name {
+    width: 180px; font-weight: 700; font-size: .9rem;
+    color: rgba(255,255,255,.85);
+  }
+  .skill-bar-wrap {
+    flex:1; height: 10px;
+    background: rgba(255,255,255,.08);
+    border-radius: 10px; overflow: hidden;
+  }
+  .skill-bar {
+    height: 100%; border-radius: 10px;
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 1s cubic-bezier(.4,0,.2,1);
+  }
+  .skill-bar.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+  .skill-bar.gold { background: linear-gradient(90deg, var(--gold), var(--lime)); }
+  .skill-pct {
+    font-family: 'Orbitron', monospace;
+    font-size: .7rem; color: var(--violet);
+    width: 36px; text-align: right;
+  }
+
+  /* AI Tools Pills */
+  .tools-pills {
+    display: flex; flex-wrap: wrap; gap: 14px;
+    justify-content: center; margin-bottom: 60px;
+  }
+  .tool-pill {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 50px; padding: 10px 22px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: .9rem;
+    transition: transform .2s, box-shadow .2s;
+    cursor: default;
+  }
+  .tool-pill:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(124,58,237,.3);
+    background: rgba(255,255,255,.15);
+  }
+  .tool-pill-icon { font-size: 1.4rem; }
+
+  /* ── CERTIFICATE ── */
+  .cert-section {
+    background: linear-gradient(180deg, #1a0533 0%, #0f0c29 100%);
+  }
+  .cert-wrapper {
+    max-width: 900px; margin: 0 auto;
+    position: relative;
+  }
+  .certificate {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0f1f3d 50%, #1a0a2e 100%);
+    border-radius: 32px;
+    padding: 60px;
+    position: relative; overflow: hidden;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 0 0 2px var(--gold), 0 40px 100px rgba(245,158,11,.2);
+  }
+  .cert-deco {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,158,11,.15), transparent);
+  }
+  .cert-deco:nth-child(1) { width:300px; height:300px; top:-100px; right:-100px; }
+  .cert-deco:nth-child(2) { width:200px; height:200px; bottom:-80px; left:-80px; }
+  .cert-content { position: relative; z-index:1; text-align: center; }
+  .cert-top-line {
+    font-size: .75rem; letter-spacing: 5px; color: var(--gold);
+    text-transform: uppercase; font-weight: 800; margin-bottom: 8px;
+  }
+  .cert-org {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.4rem; font-weight: 800; color: var(--cyan);
+    margin-bottom: 30px;
+  }
+  .cert-star-row {
+    display: flex; justify-content: center; gap: 6px;
+    font-size: 1.2rem; margin-bottom: 20px;
+    color: var(--gold);
+  }
+  .cert-presents {
+    font-size: .85rem; letter-spacing: 3px; color: rgba(255,255,255,.5);
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .cert-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.2rem; font-weight: 900;
+    background: linear-gradient(135deg, var(--gold), var(--pink), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px; line-height: 1.2;
+  }
+  .cert-subtitle { font-size: .85rem; color: rgba(255,255,255,.5); letter-spacing:2px; margin-bottom: 36px; }
+  .cert-name {
+    font-family: 'Baloo 2', cursive;
+    font-size: 3.5rem; font-weight: 800;
+    color: #fff; margin-bottom: 6px;
+    text-shadow: 0 0 40px rgba(124,58,237,.8);
+  }
+  .cert-underline {
+    width: 300px; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 20px;
+  }
+  .cert-class {
+    font-size: 1rem; color: rgba(255,255,255,.7);
+    margin-bottom: 40px; font-weight: 600;
+  }
+  .cert-body {
+    font-size: 1rem; line-height: 1.8;
+    color: rgba(255,255,255,.7); max-width: 600px; margin: 0 auto 40px;
+  }
+  .cert-body strong { color: var(--violet); }
+  .cert-badges {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 12px;
+    margin-bottom: 40px;
+  }
+  .cert-badge {
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: .8rem; font-weight: 800;
+    border: 1.5px solid var(--gold);
+    color: var(--gold); letter-spacing: 1px;
+  }
+  .cert-footer {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 20px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(245,158,11,.3);
+  }
+  .cert-sign { text-align: center; }
+  .cert-sign-name {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.1rem; font-weight: 800; color: #fff;
+  }
+  .cert-sign-role { font-size: .75rem; color: rgba(255,255,255,.5); letter-spacing: 1px; }
+  .cert-sign-line { width: 120px; height: 1px; background: rgba(255,255,255,.3); margin: 8px auto 6px; }
+  .cert-seal {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--pink));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 0 30px rgba(245,158,11,.5);
+    animation: sealGlow 3s ease-in-out infinite;
+  }
+  @keyframes sealGlow {
+    0%,100% { box-shadow: 0 0 30px rgba(245,158,11,.5); }
+    50% { box-shadow: 0 0 60px rgba(245,158,11,.8); }
+  }
+
+  /* ── GALLERY ── */
+  .gallery-section {
+    background: linear-gradient(180deg, #0f0c29 0%, #1a0a2e 100%);
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px; max-width: 1100px; margin: 0 auto;
+  }
+  .gallery-item {
+    border-radius: 20px; overflow: hidden;
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    transition: transform .3s, box-shadow .3s;
+    cursor: default;
+  }
+  .gallery-item:hover {
+    transform: scale(1.05) translateY(-6px);
+    box-shadow: 0 20px 50px rgba(124,58,237,.4);
+  }
+  .gallery-item:first-child {
+    grid-column: span 2; grid-row: span 2;
+    background: linear-gradient(135deg, rgba(124,58,237,.3), rgba(236,72,153,.2));
+  }
+  .gallery-icon { font-size: 3rem; }
+  .gallery-label {
+    font-weight: 800; font-size: .9rem;
+    color: rgba(255,255,255,.8);
+    text-align: center; padding: 0 12px;
+  }
+  .gallery-item:first-child .gallery-icon { font-size: 5rem; }
+  .gallery-item:first-child .gallery-label { font-size: 1.1rem; }
+
+  /* ── MESSAGE ── */
+  .message-section {
+    background: linear-gradient(180deg, #1a0a2e 0%, #0f0c29 100%);
+  }
+  .message-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 40px; max-width: 1000px; margin: 0 auto;
+  }
+  .message-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px; padding: 40px;
+    position: relative; overflow: hidden;
+    transition: transform .3s;
+  }
+  .message-card:hover { transform: translateY(-6px); }
+  .message-card::before {
+    content:'';
+    position: absolute; top:0; left:0; right:0; height:4px;
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+  }
+  .message-card.teacher::before {
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+  }
+  .message-who {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 20px;
+  }
+  .message-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .message-avatar.cyan { background: linear-gradient(135deg, var(--cyan), var(--purple)); }
+  .message-who-info { flex:1; }
+  .message-from {
+    font-weight: 800; font-size: 1rem; color: #fff;
+  }
+  .message-role {
+    font-size: .8rem; color: rgba(255,255,255,.5);
+    font-weight: 600;
+  }
+  .message-text {
+    font-size: .95rem; line-height: 1.8;
+    color: rgba(255,255,255,.75);
+    font-style: italic;
+  }
+  .message-text::before { content: '" '; color: var(--violet); font-size: 1.5rem; }
+  .message-text::after { content: ' "'; color: var(--violet); font-size: 1.5rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index:1;
+    background: #080618;
+    padding: 50px 40px 30px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem; font-weight: 900;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .footer-tagline {
+    font-size: .85rem; color: rgba(255,255,255,.4);
+    margin-bottom: 24px;
+  }
+  .footer-kd {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 10px 24px;
+    font-size: .85rem; color: rgba(255,255,255,.6);
+    margin-bottom: 24px;
+  }
+  .footer-bottom {
+    font-size: .75rem; color: rgba(255,255,255,.25);
+    letter-spacing: 1px;
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* ── GLITCH ── */
+  .glitch {
+    position: relative;
+    animation: glitch-main 5s infinite;
+  }
+  @keyframes glitch-main {
+    0%,90%,100% { text-shadow: none; }
+    92% { text-shadow: 2px 0 var(--cyan), -2px 0 var(--pink); }
+    94% { text-shadow: -2px 0 var(--cyan), 2px 0 var(--pink); }
+    96% { text-shadow: 2px 0 var(--gold), -2px 0 var(--violet); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; }
+    .hero-text { order: 2; }
+    .photo-wrapper { order: 1; }
+    .hero-info { align-items: center; }
+    .hero-btns { justify-content: center; }
+    .about-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr 1fr; }
+    .message-grid { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: 1fr 1fr; }
+    .hero-name { font-size: 2.8rem; }
+    nav { padding: 12px 20px; }
+    section { padding: 70px 20px; }
+    .certificate { padding: 30px 20px; }
+    .cert-name { font-size: 2.2rem; }
+    .cert-title { font-size: 1.5rem; }
+  }
+  @media (max-width: 600px) {
+    .projects-grid { grid-template-columns: 1fr; }
+    .photo-3d-scene { width: 260px; height: 310px; }
+    .hero-name { font-size: 2.2rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- STARS -->
+<canvas id="starsCanvas"></canvas>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AI EXPLORER</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#certificate">Certificate</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid">
+    <div class="photo-wrapper">
+      <div style="position:relative;">
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring"></div>
+        <div class="photo-3d-scene">
+          <div class="photo-card">
+            <img src="ChatGPT_Image_May_1__2026__10_12_15_PM.png" alt="Riddhi Mukesh Jain"
+                 onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#7c3aed,#ec4899)'; this.parentElement.innerHTML += '<div style=\'display:flex;align-items:center;justify-content:center;height:100%;font-size:5rem;\'>👧</div>';">
+          </div>
+          <div class="photo-badge">✨ GenAI Explorer ✨</div>
+        </div>
+        <div class="orbit-icon" style="position:absolute;top:-10px;right:-20px;">🤖</div>
+        <div class="orbit-icon" style="position:absolute;top:40%;right:-55px;">🎨</div>
+        <div class="orbit-icon" style="position:absolute;bottom:40px;right:-10px;">🎵</div>
+        <div class="orbit-icon" style="position:absolute;top:20%;left:-55px;">📚</div>
+      </div>
+    </div>
+
+    <div class="hero-text">
+      <div class="hero-greeting">
+        <div class="hello-dot"></div>
+        Hello, World! I am
+      </div>
+      <h1 class="hero-name glitch">Riddhi<br>Mukesh Jain</h1>
+      <div class="hero-title">⭐ GenAI Explorer · AI Creator ⭐</div>
+      <div class="hero-info">
+        <div class="hero-info-item"><span>🏫</span><span>VPNCPS School, Nanded City</span></div>
+        <div class="hero-info-item"><span>📚</span><span>5th Standard Student</span></div>
+        <div class="hero-info-item"><span>👨‍👩‍👧</span><span>Proud Daughter of Mr. Mukesh Jain</span></div>
+        <div class="hero-info-item"><span>🌟</span><span>Knowledge Duckling · May 2026 Batch</span></div>
+      </div>
+      <p class="hero-desc">
+        I am a young <strong>AI Explorer</strong> who completed the 15-day GenAI Summer Course and learned to create amazing things using Artificial Intelligence. I build, create, and imagine with the power of AI! 🚀
+      </p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-primary">🚀 See My Projects</a>
+        <a href="#certificate" class="btn-secondary">🏆 My Certificate</a>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>SCROLL DOWN</span>
+    <span class="scroll-arrow">↓</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="section-header reveal">
+    <div class="section-label">My Story</div>
+    <h2 class="section-title">Who Am I? 🌟</h2>
+    <p class="section-sub">A curious young mind who discovered the magic of AI and never looked back!</p>
+  </div>
+  <div class="about-grid">
+    <div class="about-card reveal">
+      <div class="about-label">ABOUT ME</div>
+      <div class="about-title">Meet Riddhi! 👋</div>
+      <p class="about-text">
+        Hi! I'm <strong>Riddhi Mukesh Jain</strong>, a 5th Standard student at VPNCPS School in Nanded City, Pune. I love learning new things, and this summer I discovered something incredible — <strong>Artificial Intelligence!</strong>
+        <br><br>
+        Through the amazing <strong>Knowledge Duckling AI Summer Course</strong>, I spent 15 wonderful days learning how to use AI tools to help me study, create art, write stories, compose music, and build my very own website!
+        <br><br>
+        My teacher, <strong>Tejashri ma'am</strong>, taught me that AI is not just for adults — it's for curious kids like me too! Now I can use AI to do homework faster, create beautiful posters, and even write songs! 🎵
+      </p>
+    </div>
+    <div class="stats-grid reveal">
+      <div class="stat-card">
+        <span class="stat-icon">📅</span>
+        <div class="stat-num">15</div>
+        <div class="stat-label">Days of Learning</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🛠️</span>
+        <div class="stat-num">8+</div>
+        <div class="stat-label">AI Tools Mastered</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🎨</span>
+        <div class="stat-num">6</div>
+        <div class="stat-label">Projects Completed</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⭐</span>
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Explorer Spirit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="projects-section" id="projects">
+  <div class="section-header reveal">
+    <div class="section-label">What I Created</div>
+    <h2 class="section-title">My AI Projects 🚀</h2>
+    <p class="section-sub">During 15 days of the GenAI summer course, I created these amazing projects using powerful AI tools!</p>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-emoji">📚</div>
+      <div class="project-tag">Day 1–3</div>
+      <div class="project-title">AI Homework Helper</div>
+      <p class="project-desc">I learned to use ChatGPT and Gemini to understand difficult chapters in Maths and Science. I created a personal study guide that explains every topic in simple, fun ways!</p>
+      <div class="project-tool">
+        <span class="tool-chip">ChatGPT</span>
+        <span class="tool-chip cyan">Gemini</span>
+        <span class="tool-chip gold">NotebookLM</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-emoji">🎨</div>
+      <div class="project-tag">Day 4–6</div>
+      <div class="project-title">AI Art Poster</div>
+      <p class="project-desc">I created a stunning digital poster about "Save Water, Save Life" using DALL-E and Canva. My poster has beautiful AI-generated images and I designed the whole layout myself!</p>
+      <div class="project-tool">
+        <span class="tool-chip pink">DALL-E</span>
+        <span class="tool-chip gold">Canva</span>
+        <span class="tool-chip green">Nano Banana</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-emoji">📖</div>
+      <div class="project-tag">Day 7–8</div>
+      <div class="project-title">My AI Story</div>
+      <p class="project-desc">I wrote a creative story called "Zara and the Magic Robot" — a tale about a girl who befriends an AI robot and together they solve mysteries! ChatGPT helped me make it extra exciting.</p>
+      <div class="project-tool">
+        <span class="tool-chip">ChatGPT</span>
+        <span class="tool-chip cyan">Gemini</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-emoji">🎵</div>
+      <div class="project-tag">Day 9–10</div>
+      <div class="project-title">My AI Song</div>
+      <p class="project-desc">I composed my very own song called "Future is Bright" using Suno AI! I wrote the lyrics about dreaming big and technology, and Suno made it sound like a real professional song!</p>
+      <div class="project-tool">
+        <span class="tool-chip pink">Suno AI</span>
+        <span class="tool-chip">ChatGPT</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-emoji">📊</div>
+      <div class="project-tag">Day 11–12</div>
+      <div class="project-title">AI Presentation</div>
+      <p class="project-desc">I created a brilliant presentation on "How AI Helps Students" using Gamma AI. It has beautiful slides, animations, and smart content — my class loved it when I presented it!</p>
+      <div class="project-tool">
+        <span class="tool-chip gold">Gamma AI</span>
+        <span class="tool-chip cyan">Canva</span>
+        <span class="tool-chip green">Veo 3</span>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-emoji">🌐</div>
+      <div class="project-tag">Day 13–15</div>
+      <div class="project-title">This Portfolio Website!</div>
+      <p class="project-desc">My FINAL and BIGGEST project — this beautiful portfolio website! I learned the basics of how websites are built and used AI to help design and create it. You're looking at my masterpiece! ✨</p>
+      <div class="project-tool">
+        <span class="tool-chip">ChatGPT</span>
+        <span class="tool-chip pink">HTML/CSS</span>
+        <span class="tool-chip cyan">AI Design</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills-section" id="skills">
+  <div class="section-header reveal">
+    <div class="section-label">What I Learned</div>
+    <h2 class="section-title">My AI Skills 💡</h2>
+    <p class="section-sub">From zero to AI Explorer in just 15 days! Here's what I can now do with AI:</p>
+  </div>
+
+  <div class="tools-pills reveal">
+    <div class="tool-pill"><span class="tool-pill-icon">🤖</span>ChatGPT</div>
+    <div class="tool-pill"><span class="tool-pill-icon">💎</span>Gemini</div>
+    <div class="tool-pill"><span class="tool-pill-icon">📒</span>NotebookLM</div>
+    <div class="tool-pill"><span class="tool-pill-icon">🎨</span>Canva</div>
+    <div class="tool-pill"><span class="tool-pill-icon">🖼️</span>DALL-E</div>
+    <div class="tool-pill"><span class="tool-pill-icon">🎵</span>Suno</div>
+    <div class="tool-pill"><span class="tool-pill-icon">🎬</span>Veo 3</div>
+    <div class="tool-pill"><span class="tool-pill-icon">📑</span>Gamma AI</div>
+  </div>
+
+  <div class="skills-inner">
+    <div class="skills-group reveal">
+      <div class="skills-group-title">🧠 AI & Creativity Skills</div>
+      <div class="skill-row">
+        <div class="skill-item">
+          <span class="skill-icon">💬</span>
+          <span class="skill-name">Prompt Writing</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" data-width="92"></div></div>
+          <span class="skill-pct">92%</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">🎨</span>
+          <span class="skill-name">AI Art Creation</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" data-width="88"></div></div>
+          <span class="skill-pct">88%</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">✍️</span>
+          <span class="skill-name">AI Story Writing</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" data-width="85"></div></div>
+          <span class="skill-pct">85%</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">🎵</span>
+          <span class="skill-name">AI Music Making</span>
+          <div class="skill-bar-wrap"><div class="skill-bar cyan" data-width="80"></div></div>
+          <span class="skill-pct">80%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skills-group reveal">
+      <div class="skills-group-title">📚 Study & Research Skills</div>
+      <div class="skill-row">
+        <div class="skill-item">
+          <span class="skill-icon">📖</span>
+          <span class="skill-name">AI Study Help</span>
+          <div class="skill-bar-wrap"><div class="skill-bar gold" data-width="95"></div></div>
+          <span class="skill-pct">95%</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">📊</span>
+          <span class="skill-name">Smart Presentations</span>
+          <div class="skill-bar-wrap"><div class="skill-bar gold" data-width="87"></div></div>
+          <span class="skill-pct">87%</span>
+        </div>
+        <div class="skill-item">
+          <span class="skill-icon">🔍</span>
+          <span class="skill-name">Research with AI</span>
+          <div class="skill-bar-wrap"><div class="skill-bar" data-width="82"></div></div>
+          <span class="skill-pct">82%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section">
+  <div class="section-header reveal">
+    <div class="section-label">My Journey</div>
+    <h2 class="section-title">Moments & Memories 📸</h2>
+    <p class="section-sub">15 days of learning, creating, and growing as an AI Explorer!</p>
+  </div>
+  <div class="gallery-grid reveal">
+    <div class="gallery-item">
+      <div class="gallery-icon">🚀</div>
+      <div class="gallery-label">Day 1: My AI Journey Begins!</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-icon">🎨</div>
+      <div class="gallery-label">Creating AI Art</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-icon">📖</div>
+      <div class="gallery-label">Writing My Story</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-icon">🎵</div>
+      <div class="gallery-label">My First AI Song</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-icon">📊</div>
+      <div class="gallery-label">Presentation Day</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-icon">🏆</div>
+      <div class="gallery-label">Certificate Day!</div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATE -->
+<section class="cert-section" id="certificate">
+  <div class="section-header reveal">
+    <div class="section-label">Achievement Unlocked</div>
+    <h2 class="section-title">My Certificate 🏆</h2>
+    <p class="section-sub">Officially recognized as a GenAI Explorer by Knowledge Duckling!</p>
+  </div>
+  <div class="cert-wrapper reveal">
+    <div class="certificate">
+      <div class="cert-deco"></div>
+      <div class="cert-deco"></div>
+      <div class="cert-content">
+        <div class="cert-top-line">🦆 Knowledge Duckling · Pune, Maharashtra 🦆</div>
+        <div class="cert-org">Nurturing Young Minds for a Smarter Tomorrow</div>
+        <div class="cert-star-row">⭐ ⭐ ⭐ ⭐ ⭐</div>
+        <div class="cert-presents">proudly presents this certificate to</div>
+        <div class="cert-title">GenAI Explorer</div>
+        <div class="cert-subtitle">CERTIFICATE OF ACHIEVEMENT</div>
+        <div class="cert-name">Riddhi Mukesh Jain</div>
+        <div class="cert-underline"></div>
+        <div class="cert-class">5th Standard · VPNCPS School, Nanded City, Pune</div>
+        <p class="cert-body">
+          For successfully completing the <strong>15-Day GenAI Summer Course — "My AI School Assistant"</strong> with outstanding dedication, creativity, and enthusiasm. Riddhi has demonstrated exceptional skill in using Artificial Intelligence tools to learn, create, and innovate, showcasing the spirit of a true AI Explorer.
+        </p>
+        <div class="cert-badges">
+          <div class="cert-badge">🤖 AI Prompt Master</div>
+          <div class="cert-badge">🎨 Creative Creator</div>
+          <div class="cert-badge">📚 Smart Learner</div>
+          <div class="cert-badge">🌟 Future Innovator</div>
+        </div>
+        <div class="cert-footer">
+          <div class="cert-sign">
+            <div class="cert-sign-name">Tejashri Jain</div>
+            <div class="cert-sign-line"></div>
+            <div class="cert-sign-role">M.Tech – CSE | Lead Educator<br>Knowledge Duckling, Pune</div>
+          </div>
+          <div class="cert-seal">🏅</div>
+          <div class="cert-sign">
+            <div class="cert-sign-name">May 2026</div>
+            <div class="cert-sign-line"></div>
+            <div class="cert-sign-role">Date of Completion<br>Nanded City, Pune, MH</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MESSAGES -->
+<section class="message-section">
+  <div class="section-header reveal">
+    <div class="section-label">Words of Love</div>
+    <h2 class="section-title">What They Say 💌</h2>
+  </div>
+  <div class="message-grid">
+    <div class="message-card reveal">
+      <div class="message-who">
+        <div class="message-avatar">👨</div>
+        <div class="message-who-info">
+          <div class="message-from">Mr. Mukesh Jain</div>
+          <div class="message-role">Proud Father</div>
+        </div>
+      </div>
+      <p class="message-text">I never imagined my little Riddhi would be building websites and creating AI art at this age! Watching her present her projects with such confidence filled my heart with immense pride. She truly is my AI Explorer, and this is just the beginning of something extraordinary for her!</p>
+    </div>
+    <div class="message-card teacher reveal">
+      <div class="message-who">
+        <div class="message-avatar cyan">👩‍🏫</div>
+        <div class="message-who-info">
+          <div class="message-from">Tejashri Ma'am</div>
+          <div class="message-role">Knowledge Duckling · Lead Educator</div>
+        </div>
+      </div>
+      <p class="message-text">Riddhi is one of the most enthusiastic and curious students I have ever taught. Her creativity with AI tools, especially her story writing and poster design, was exceptional. She approached every challenge with a smile and never gave up. Riddhi, the future belongs to young AI Explorers like you!</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">RIDDHI · AI EXPLORER</div>
+  <div class="footer-tagline">Building the future, one AI project at a time ✨</div>
+  <div class="footer-kd">
+    🦆 Powered by <strong style="color:var(--cyan);">Knowledge Duckling</strong> · Nanded City, Pune
+  </div>
+  <div class="footer-bottom">© 2026 Riddhi Mukesh Jain · GenAI Explorer · VPNCPS School, Nanded City</div>
+</footer>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  cursorRing.style.left=rx+'px'; cursorRing.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+// ── STARS ──
+const canvas = document.getElementById('starsCanvas');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+resizeCanvas(); window.addEventListener('resize',resizeCanvas);
+
+const stars = Array.from({length:200},()=>({
+  x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+  r:Math.random()*1.8+.2, a:Math.random(),
+  sp:Math.random()*.003+.001
+}));
+
+function drawStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  stars.forEach(s=>{
+    s.a += s.sp; if(s.a>1||s.a<0) s.sp*=-1;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${s.a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+// ── PARTICLES ──
+const particleColors=['#7c3aed','#ec4899','#06b6d4','#f59e0b','#84cc16','#a855f7'];
+const pContainer = document.getElementById('particles');
+for(let i=0;i<40;i++){
+  const p = document.createElement('div');
+  p.className='particle';
+  const size = Math.random()*8+3;
+  p.style.cssText=`
+    left:${Math.random()*100}%;
+    width:${size}px; height:${size}px;
+    background:${particleColors[Math.floor(Math.random()*particleColors.length)]};
+    animation-duration:${Math.random()*15+8}s;
+    animation-delay:${Math.random()*10}s;
+  `;
+  pContainer.appendChild(p);
+}
+
+// ── SKILL BARS ──
+const skillBars = document.querySelectorAll('.skill-bar');
+const skillObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const bar = e.target;
+      const w = bar.dataset.width;
+      bar.style.transform=`scaleX(${w/100})`;
+    }
+  });
+},{threshold:.3});
+skillBars.forEach(b=>skillObserver.observe(b));
+
+// ── REVEAL ──
+const reveals = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('visible'), i*80);
+    }
+  });
+},{threshold:.1});
+reveals.forEach(r=>revealObserver.observe(r));
+
+// ── 3D TILT on photo ──
+const scene = document.querySelector('.photo-3d-scene');
+if(scene){
+  document.addEventListener('mousemove',e=>{
+    const cx=innerWidth/2, cy=innerHeight/2;
+    const rx2=(e.clientY-cy)/cy*8;
+    const ry2=-(e.clientX-cx)/cx*8;
+    scene.style.transform=`rotateX(${rx2}deg) rotateY(${ry2}deg) translateY(-9px)`;
+  });
+}
+
+// ── COUNTER ANIMATION ──
+function animateCounter(el, target){
+  let current=0; const step=target/50;
+  const timer=setInterval(()=>{
+    current+=step;
+    if(current>=target){ current=target; clearInterval(timer); }
+    el.textContent = Number.isInteger(target)
+      ? Math.floor(current)
+      : Math.floor(current)+'%';
+    if(el.dataset.suffix) el.textContent += el.dataset.suffix;
+  },30);
+}
+const statNums = document.querySelectorAll('.stat-num');
+const statsObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      statNums.forEach(n=>{
+        const val = n.textContent.replace(/[^0-9]/g,'');
+        // just add shine class
+        n.style.textShadow='0 0 20px rgba(245,158,11,.7)';
+      });
+      statsObserver.disconnect();
+    }
+  });
+},{threshold:.5});
+if(statNums[0]) statsObserver.observe(statNums[0]);
+
+// ── SMOOTH NAV ──
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+
+// ── FLOATING STARS on click ──
+document.addEventListener('click',e=>{
+  const emojis=['⭐','✨','🌟','💫','🎉'];
+  for(let i=0;i<6;i++){
+    const star=document.createElement('div');
+    star.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    star.style.cssText=`
+      position:fixed; left:${e.clientX}px; top:${e.clientY}px;
+      font-size:${Math.random()*14+10}px;
+      pointer-events:none; z-index:9999;
+      animation:starBurst .8s forwards;
+      transform:translate(-50%,-50%);
+    `;
+    const angle=Math.random()*360;
+    const dist=Math.random()*80+40;
+    star.style.setProperty('--dx',`${Math.cos(angle*Math.PI/180)*dist}px`);
+    star.style.setProperty('--dy',`${Math.sin(angle*Math.PI/180)*dist}px`);
+    document.body.appendChild(star);
+    setTimeout(()=>star.remove(),800);
+  }
+});
+
+const style=document.createElement('style');
+style.textContent=`
+@keyframes starBurst{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0);}
+}`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
